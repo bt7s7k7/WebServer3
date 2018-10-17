@@ -1,0 +1,13 @@
+{
+  "name": "web-server-3",
+  "version": "0.0.0",
+  "description": "WebServer 3",
+  "main": "app.js",
+  "author": {
+    "name": "bt7s7k7"
+  },
+	"dependencies": {
+		"butils": "file:///C:\\Users\\bt7s7\\MEGA\\Sandbox\\node_modules\\bUtils",
+		"mime": "file:///C:\\Users\\bt7s7\\MEGA\\Sandbox\\projectFolders\\Mime"
+	}
+}
