@@ -9,7 +9,8 @@ function handleConnection(request, response, address, url, filepath, files, hand
 
 	if (cookies.adminTools_password == password) {
 		writeIndex(request, response, address, url, filepath, files, () => {
-			response.write(`<br /><form method="post" action="/_action?upload=${encodeURIComponent(url.pathname)}&redirect=${encodeURIComponent(url.pathname)}" enctype="multipart/form-data"><input type="file" name="upload" /><input type="submit" /></form>`)
+			response.write(`<br /><form method="post" action="/_action?upload=${encodeURIComponent(url.pathname)}&redirect=${encodeURIComponent(url.pathname)}" enctype="multipart/form-data"><input type="file" name="upload" /><input type="submit" /></form><br />`)
+			response.write(`<form action="/_action"><input name="newFolder"/><input name="redirect" type="hidden" value="${url.pathname}"><input name="location" type="hidden" value="${url.pathname}"><input type="submit" value="New Folder" /></form>`)
 		}, "Admin Directory Listing", (href, stat, name) => {
 			var ahref = `/_action?delete=${encodeURIComponent(href)}&redirect=${encodeURIComponent(url.pathname)}`
 			if (stat && stat.isDirectory()) {
@@ -104,13 +105,16 @@ B.loadCfgFile(path.join(__dirname, "plugins", "adminTools.cfg"), {
 							let filepath = path.join(serverDir, decodeURIComponent(query.delete))
 							fs.unlink(filepath, (err) => {
 								if (err) {
-									B.log(err.stack)
-								}
-								writeRedirect(response, query.redirect || "/")
+									fs.rmdir(filepath, (errA) => {
+										if (errA) {
+											B.log(err)
+											B.log(errA)
+										}
+										writeRedirect(response, query.redirect || "/")
+									})
+								} else writeRedirect(response, query.redirect || "/")
 							})
-						}
-
-						if (query.upload) {
+						} else if (query.upload) {
 							let filepath = path.join(serverDir, decodeURIComponent(query.upload))
 							let fileData = data.slice(data.indexOf(new Buffer("\r\n\r\n")) + 4, data.lastIndexOf(new Buffer("\r\n")))
 							fileData = fileData.slice(0, fileData.lastIndexOf(new Buffer("\r\n")))
@@ -118,6 +122,12 @@ B.loadCfgFile(path.join(__dirname, "plugins", "adminTools.cfg"), {
 							cDisp = cDisp.slice(32, cDisp.indexOf(new Buffer("\r\n"))).toString()
 							let metadata = B.parseQuery(cDisp.toString(), /;\s*?/)
 							fs.writeFile(path.join(filepath, metadata.filename.slice(1, -1)), fileData, (err) => {
+								if (err) B.log(err)
+								writeRedirect(response, query.redirect || "/")
+							})
+						} else if (query.newFolder) {
+							let filepath = path.join(serverDir, query.location, query.newFolder)
+							fs.mkdir(filepath, (err) => {
 								if (err) B.log(err)
 								writeRedirect(response, query.redirect || "/")
 							})
