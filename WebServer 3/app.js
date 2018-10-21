@@ -206,6 +206,9 @@ function writeIndex(request, response, address, url, filepath, files, callback =
 	var fileTags = {}
 
 	response.write(`<html>\n<head>\n<title>${header}</title>\n</head><body>\n<h1>${header}</h1><br />\n`)
+	if (files.length == 0) {
+		finish()
+	}
 	files.forEach(v => {
 		var fullPath = path.join(filepath, v)
 		fs.stat(fullPath, (err, stat) => {
