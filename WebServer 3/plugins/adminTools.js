@@ -31,7 +31,7 @@ function handleConnection(request, response, address, url, filepath, files, hand
 
 }
 
-B.loadCfgFile(path.join(__dirname, "plugins\\adminTools.cfg"), {
+B.loadCfgFile(path.join(__dirname, "plugins", "adminTools.cfg"), {
 	password: "string"
 }, (err, data) => {
 	if (err) {
