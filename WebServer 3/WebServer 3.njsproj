@@ -4,7 +4,7 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>WebServer 3</Name>
     <RootNamespace>WebServer 3</RootNamespace>
-    <NodeExePath>C:\Users\bt7s7\AppData\Roaming\nvm\v8.7.0\node.exe</NodeExePath>
+    <NodeExePath>C:\Users\bt7s7\AppData\Roaming\nvm\v8.11.4\node.exe</NodeExePath>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
