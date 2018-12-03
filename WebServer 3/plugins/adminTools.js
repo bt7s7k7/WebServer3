@@ -1,6 +1,7 @@
 B.log("Admin tools initializing...");
 var fs = require("fs")
 var path = require("path")
+var child = require("child_process")
 var password = null
 
 function handleConnection(request, response, address, url, filepath, files, handled) {
@@ -137,6 +138,52 @@ B.loadCfgFile(path.join(__dirname, "plugins", "adminTools.cfg"), {
 					}
 				}
 			})
+		} else if (url.pathname == "/_exec") {
+			handled()
+			var cookies = B.parseQuery(request.headers.cookie, /;\s*?/)
+			var query = B.parseQuery(url.query)
+
+			if (cookies.adminTools_password == password) {
+				var next = () => {
+					response.end(`
+					<form action="">
+						Command: <input name="exec" type="exec" /><input type="submit">
+					</form>
+					</body></html>
+					`)
+				}
+
+				response.write(`
+				<html><head><title>Exec</title></head><body>
+				<h1>Exec page</h1>
+
+				`)
+				if (query.exec) {
+					child.exec(query.exec, {
+						timeout: 2000
+					}, (err, out, errS) => {
+						if (response.finished) return 
+						if (err) {
+							response.write(`
+							<p style="color:red">${B.escapeHTML(err.stack)}</p>
+							`)
+						}
+						response.write(`
+						<code>
+							<p style="color:blue">${B.escapeHTML(out)}</p>
+							<p style="color:red">${B.escapeHTML(errS)}</p>
+						</code>
+						`)
+
+
+						next()
+					})
+				} else {
+					next()
+				}
+			} else {
+				writeRedirect(response, "/_login?redirect=_exec")
+			}
 		}
 	})
 })
